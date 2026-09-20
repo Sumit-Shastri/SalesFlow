@@ -1,0 +1,5 @@
+VisitID,RepID,CustomerName,DateTime,Latitude,Longitude,ProductsSold,Total
+V-001,R-01,Corner Store,2026-09-01 09:00,19.0760,72.8777,"SKU-101 x2; SKU-104 x5",90.00
+V-002,R-02,Green Grocer,2026-09-01 10:30,19.0800,72.8800,"SKU-300 x1",29.99
+V-003,R-01,Blue Cafe,2026-09-01 11:15,19.07,72.88,"SKU-100 x3",37.50
+V-004,R-03,Invalid GPS,2026-09-01 12:00,not_a_lat,not_a_lon,"SKU-103 x1",9.99

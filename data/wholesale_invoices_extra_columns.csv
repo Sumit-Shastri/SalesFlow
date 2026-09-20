@@ -1,0 +1,6 @@
+InvoiceNo,InvoiceDate,BuyerName,BuyerGST,PO_Number,ItemCode,Description,Qty,Unit,Rate,TaxPercent,TaxAmount,NetAmount,Notes
+INV-5001,2026-08-28,Acme Corp,27ABCDE1234F1Z5,PO-778,ITM-01,Industrial Pump,10,pcs,250.00,18,450.00,2950.00,"Urgent delivery requested.
+Handle with care."
+INV-5002,2026-08-30,Global Traders,,PO-779,ITM-02,Valve Set,5,box,1200.00,18,1080.00,7080.00,"Include spare seals."
+INV-5003,2026-09-01,Local Supplies,29XYZ9876K2Z1,PO-780,ITM-03,Filter Cartridge,20,pcs,15.00,12,36.00,336.00,""
+INV-5004,2026-09-02,Acme Corp,27ABCDE1234F1Z5,PO-781,ITM-04,Pressure Gauge,2,pcs,75.50,18,27.18,177.18,"Calibration certificate attached."

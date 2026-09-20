@@ -1,0 +1,9 @@
+OrderID,Date,Time,StoreID,RegisterID,SKU,ProductName,Category,Quantity,UnitPrice,Total,PaymentMethod,CustomerID
+1001,2026-09-01,09:12:34,S001,R1,SKU-100,Classic T-Shirt,Apparel,2,12.50,25.00,Credit,CU-501
+1002,2026-09-01,09:45:10,S001,R1,SKU-101,Slim Jeans,Apparel,1,45.00,45.00,Cash,CU-502
+1003,2026-09-01,10:05:02,S002,R2,SKU-200,Espresso Machine,Appliances,1,199.99,199.99,Credit,CU-503
+1004,2026-09-01,10:20:15,S001,R1,SKU-102,Sneakers,Footwear,1,69.99,69.99,Debit,CU-504
+1005,2026-09-01,11:00:00,S003,R1,SKU-300,Blender,Appliances,3,29.99,89.97,Credit,CU-505
+1006,2026-09-01,11:30:45,S002,R2,SKU-103,Baseball Cap,Accessories,2,9.99,19.98,Cash,CU-506
+1007,2026-09-01,12:05:22,S001,R1,SKU-104,Socks Pack,Apparel,5,4.00,20.00,Credit,CU-507
+1008,2026-09-01,12:45:00,S003,R1,SKU-101,Slim Jeans,Apparel,2,45.00,90.00,Debit,CU-508

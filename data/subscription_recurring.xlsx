@@ -1,0 +1,5 @@
+SubscriptionID,CustomerID,Plan,StartDate,NextBilling,Amount,Currency,Status,PaymentMethod
+SUB-001,CU-100,Pro,2025-09-01,2026-09-01,29.99,USD,Active,Card
+SUB-002,CU-101,Basic,2026-01-15,2026-09-15,9.99,USD,Active,PayPal
+SUB-003,CU-102,Pro,2026-06-01,2026-09-01,14.99,USD,Cancelled,Card
+SUB-004,CU-103,Enterprise,2024-11-01,2026-09-30,499.00,USD,Active,Invoice

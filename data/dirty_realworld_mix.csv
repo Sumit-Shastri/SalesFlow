@@ -1,0 +1,8 @@
+ID,Date,Customer,Item,Qty,Price,Total,Payment,Notes
+D-001,2026-09-01,Anna,"Classic T-Shirt",2,12.50,25.00,Credit,"First time customer"
+D-002,2026-09-01,anna,"classic t-shirt",2,12.50,25.00,Credit,"duplicate entry"
+D-003,2026/09/01,Ben,"Espresso Machine",1,$199.99,199.99,Credit,"Includes warranty, serial# 12345"
+D-004,01-09-2026,Clara,"Sneakers",1,69.99,,Debit,"missing total"
+D-005,2026-09-02,David,"Socks Pack",5,4.00,20.00,Cash,""
+D-006,2026-09-02,Eve,"Blender",3,29.99,89.97,Credit,"Returned once"
+D-007,2026-09-03,Frank,"Unknown Item",1,0.00,0.00,Cash,"price not set"

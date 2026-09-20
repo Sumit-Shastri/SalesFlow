@@ -1,0 +1,9 @@
+Date,Description,Amount,Type
+2026-09-01,Sale - coffee,3.50,Sale
+2026-09-01,Sale - sandwich,5.00,Sale
+2026-09-02,Refund - coffee,-3.50,Refund
+2026-09-03,,12.00,Sale
+2026-09-03,Expense - milk,-20.00,Expense
+2026-09-04,Sale - cake,4.75,Sale
+2026-09-04,Sale - coffee,3.50,Sale
+2026-09-05,Sale - catering,150.00,Sale
