@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pandas as pd
+from pandas.errors import EmptyDataError
 
 
 def load_sales_file(file_path: str) -> pd.DataFrame:
@@ -10,7 +11,13 @@ def load_sales_file(file_path: str) -> pd.DataFrame:
         raise FileNotFoundError(f"File not found: {file_path}")
 
     if path.suffix.lower() == ".csv":
-        return pd.read_csv(path)
+        try:
+            return pd.read_csv(path)
+        except EmptyDataError:
+            raise ValueError(
+                "The CSV file is completely empty. "
+                "Please provide a valid sales data file."
+            )
 
     if path.suffix.lower() in [".xlsx", ".xls"]:
         return pd.read_excel(path)
