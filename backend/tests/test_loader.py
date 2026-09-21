@@ -10,7 +10,7 @@ multi_curency_sales = "../data/multi_curency_sales.csv"
 promotions_and_discounts = "../data/promotions_and_discounts.csv"
 retail_pos_clean = "../data/retail_pos_clean.csv"
 
-df = load_sales_file(dirty_realworld_mix)
+df = load_sales_file(promotions_and_discounts)
 
 print(df)
 print()

@@ -46,6 +46,8 @@ def validate_sales_data(
     # Check if DataFrame is empty
     if df.empty:
         raise ValueError("The DataFrame is empty. Please provide a valid sales data file.")
+    
+    print("Check : DataFrame is not empty.")
 
     # Normalize
     normalized_df = normalize_column_names(df)
@@ -73,3 +75,14 @@ def validate_sales_data(
                     f"{null_count} missing or invalid date values found in column 'Date'. "
                     "Please provide valid date values."
                         )
+    print("Check : Date values are valid.")
+    
+    # Validate If product column is not empty
+
+    if normalized_df['Product'].isnull().any():
+        null_count = normalized_df['Product'].isnull().sum()
+        raise ValueError(
+                    f"{null_count} missing product values found in column 'Product'. "
+                    "Please provide valid product values."
+                        )
+    print("Check : Product values are valid.")
