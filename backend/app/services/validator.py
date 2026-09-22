@@ -88,7 +88,7 @@ def validate_sales_data(
     print("Check : Product values are valid.")
     
 
-    
+
     # Validate if Quantity column is numeric and positive
 
     normalized_df['Quantity'] = pd.to_numeric(
@@ -117,3 +117,34 @@ def validate_sales_data(
         )
 
     print("Check: Quantity values are valid.")
+
+
+    
+    # Validate if Unit_Price column is numeric and positive
+
+    normalized_df['Unit_Price'] = pd.to_numeric(
+        normalized_df['Unit_Price'],
+        errors="coerce"
+    )
+
+    # Check for missing or invalid Unit_Price values
+    if normalized_df['Unit_Price'].isnull().any():
+
+        null_count = normalized_df['Unit_Price'].isnull().sum()
+
+        raise ValueError(
+            f"{null_count} missing or invalid Unit_Price values found "
+            "in column 'Unit_Price'."
+        )
+
+    # Check for zero or negative Unit_Price values
+    if (normalized_df['Unit_Price'] <= 0).any():
+
+        invalid_count = (normalized_df['Unit_Price'] <= 0).sum()
+
+        raise ValueError(
+            f"{invalid_count} zero or negative Unit_Price values found "
+            "in column 'Unit_Price'."
+        )
+
+    print("Check: Unit_Price values are valid.")
