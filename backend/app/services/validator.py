@@ -148,3 +148,6 @@ def validate_sales_data(
         )
 
     print("Check: Unit_Price values are valid.")
+
+
+    return normalized_df
