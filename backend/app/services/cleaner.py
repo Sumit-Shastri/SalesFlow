@@ -12,6 +12,7 @@ import pandas as pd         # Importing the pandas library for data manipulation
 # 1. remove_empty_rows(df)
 # 2. clean_whitespace(df)
 # 3. clean_product_text(df)
+# 4. handle_duplicates(df)
 
 
 #############################################################
@@ -76,5 +77,20 @@ def clean_product_text(df):
 
     if 'Product' in df.columns:
         df['Product'] = df['Product'].str.replace(r'\s+', ' ', regex=True).str.strip()
+    
+    return df
+
+#############################################################
+#   Method Name : handle_duplicates(df)
+#   Description : This method removes duplicate rows from the DataFrame.
+#   Parameters  : df (pandas.DataFrame)
+#   Returns     : pandas.DataFrame
+#   Author      : Sumit Shastri
+#   Date        : 28-09-2026
+#############################################################
+
+def handle_duplicates(df):
+
+    df = df.drop_duplicates()
     
     return df
