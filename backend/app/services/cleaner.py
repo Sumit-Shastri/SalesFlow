@@ -10,6 +10,7 @@ import pandas as pd         # Importing the pandas library for data manipulation
 #############################################################
 
 # 1. remove_empty_rows(df)
+# 2. clean_whitespace(df)
 
 
 #############################################################
@@ -30,4 +31,28 @@ def remove_empty_rows(df):
 
     df = df.dropna(how='all')  # Remove rows where all elements are NaN
     
+    return df
+
+#############################################################
+#   Method Name : clean_whitespace(df)
+#   Description : This method removes leading and trailing 
+#                 whitespace from all string values in the 
+#                 DataFrame. It ensures that the data is clean
+#                 and free from unnecessary spaces that may 
+#                 affect analysis or processing.
+#   Parameters  : df (pandas.DataFrame) - The input DataFrame 
+#                 from which whitespace will be removed.
+#   Returns     : pandas.DataFrame - A new DataFrame with whitespace
+#                 removed.
+#   Author      : Sumit Shastri
+#   Date        : 28-09-2026
+#############################################################
+
+def clean_whitespace(df):
+
+    string_cols = df.select_dtypes(include=['object', 'string']).columns
+
+    #strip whitespaces from them
+    df[string_cols] = df[string_cols].apply(lambda x: x.str.strip())
+
     return df
