@@ -11,6 +11,7 @@ import pandas as pd         # Importing the pandas library for data manipulation
 
 # 1. remove_empty_rows(df)
 # 2. clean_whitespace(df)
+# 3. clean_product_text(df)
 
 
 #############################################################
@@ -55,4 +56,25 @@ def clean_whitespace(df):
     #strip whitespaces from them
     df[string_cols] = df[string_cols].apply(lambda x: x.str.strip())
 
+    return df
+
+
+#############################################################
+#   Method Name : clean_product_text(df)
+#   Description : This method cleans product names by replacing
+#                 multiple consecutive whitespace characters 
+#                 with a single space, ensuring consistent 
+#                 formatting while preserving the original 
+#                 product name.
+#   Parameters  : df (pandas.DataFrame)
+#   Returns     : pandas.DataFrame
+#   Author      : Sumit Shastri
+#   Date        : 28-09-2026
+#############################################################
+
+def clean_product_text(df):
+
+    if 'Product' in df.columns:
+        df['Product'] = df['Product'].str.replace(r'\s+', ' ', regex=True).str.strip()
+    
     return df
