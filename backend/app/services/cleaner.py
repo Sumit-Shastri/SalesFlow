@@ -13,6 +13,7 @@ import pandas as pd         # Importing the pandas library for data manipulation
 # 2. clean_whitespace(df)
 # 3. clean_product_text(df)
 # 4. handle_duplicates(df)
+# 5. handle_missing_values(df)
 
 
 #############################################################
@@ -21,10 +22,8 @@ import pandas as pd         # Importing the pandas library for data manipulation
 #                 the DataFrame that are completely 
 #                 empty (i.e., all values in the row
 #                 are NaN).
-#   Parameters  : df (pandas.DataFrame) - The input DataFrame 
-#                 from which empty rows will be removed.
-#   Returns     : pandas.DataFrame - A new DataFrame with empty
-#                 rows removed.
+#   Parameters  : df (pandas.DataFrame)
+#   Returns     : pandas.DataFrame 
 #   Author      : Sumit Shastri
 #   Date        : 28-09-2026
 #############################################################
@@ -42,9 +41,8 @@ def remove_empty_rows(df):
 #                 DataFrame. It ensures that the data is clean
 #                 and free from unnecessary spaces that may 
 #                 affect analysis or processing.
-#   Parameters  : df (pandas.DataFrame) - The input DataFrame 
-#                 from which whitespace will be removed.
-#   Returns     : pandas.DataFrame - A new DataFrame with whitespace
+#   Parameters  : df (pandas.DataFrame)
+#   Returns     : pandas.DataFrame 
 #                 removed.
 #   Author      : Sumit Shastri
 #   Date        : 28-09-2026
@@ -92,5 +90,21 @@ def clean_product_text(df):
 def handle_duplicates(df):
 
     df = df.drop_duplicates()
-    
+
+    return df
+
+
+#############################################################
+#   Method Name : handle_missing_values(df)
+#   Description : This method handles missing values in the DataFrame.
+#   Parameters  : df (pandas.DataFrame)
+#   Returns     : pandas.DataFrame
+#   Author      : Sumit Shastri
+#   Date        : 28-09-2026
+#############################################################
+
+def handle_missing_values(df):
+
+    df.dropna(inplace=True)  # Remove rows with any NaN values
+
     return df
