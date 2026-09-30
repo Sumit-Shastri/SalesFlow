@@ -14,6 +14,7 @@ import pandas as pd         # Importing the pandas library for data manipulation
 # 3. clean_product_text(df)
 # 4. handle_duplicates(df)
 # 5. handle_missing_values(df)
+# 6. handle_invalid_values(df)
 
 
 #############################################################
@@ -106,5 +107,24 @@ def handle_duplicates(df):
 def handle_missing_values(df):
 
     df.dropna(inplace=True)  # Remove rows with any NaN values
+
+    return df
+
+#############################################################
+#   Method Name : handle_invalid_values(df)
+#   Description : This method handles invalid values in the DataFrame.
+#   Parameters  : df (pandas.DataFrame)
+#   Returns     : pandas.DataFrame
+#   Author      : Sumit Shastri
+#   Date        : 30-09-2026
+#############################################################
+
+def handle_invalid_values(df):
+
+    if 'Unit_Price' in df.columns:
+        df = df[df['Unit_Price'] > 0]
+
+    if 'Quantity' in df.columns:
+        df = df[df['Quantity'] > 0]
 
     return df
