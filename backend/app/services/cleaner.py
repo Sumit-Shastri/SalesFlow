@@ -15,6 +15,7 @@ import pandas as pd         # Importing the pandas library for data manipulation
 # 4. handle_duplicates(df)
 # 5. handle_missing_values(df)
 # 6. handle_invalid_values(df)
+# 7. convert_datatype(df)
 
 
 #############################################################
@@ -126,5 +127,24 @@ def handle_invalid_values(df):
 
     if 'Quantity' in df.columns:
         df = df[df['Quantity'] > 0]
+
+    return df
+
+#############################################################
+#   Method Name : convert_datatype(df)
+#   Description : This method converts the data types of columns in the DataFrame.
+#   Parameters  : df (pandas.DataFrame)
+#   Returns     : pandas.DataFrame
+#   Author      : Sumit Shastri
+#   Date        : 30-09-2026
+#############################################################
+
+def convert_datatype(df):
+
+    if 'Unit_Price' in df.columns:
+        df['Unit_Price'] = df['Unit_Price'].astype(float)
+
+    if 'Quantity' in df.columns:
+        df['Quantity'] = df['Quantity'].astype(int)
 
     return df
