@@ -29,6 +29,21 @@ import pandas as pd
 #   Methods
 #############################################################
 
+#############################################################
+#   Method Name : add_revenue_column(df)
+#   Description : This method adds a new column 'Revenue' to 
+#                 the dataframe which is calculated as
+#                 Quantity * Unit_Price.
+#   Parameters  : df (pandas.DataFrame)
+#   Returns     : df (pandas.DataFrame)
+#   Author      : Sumit Shastri
+#   Date        : 02-10-2026
+#############################################################
+
+def add_revenue_column(df: pd.DataFrame) -> pd.DataFrame:
+    df['Revenue'] = df['Quantity'] * df['Unit_Price']
+    return df
+
 '''
 # 1. Overall KPI's
 
