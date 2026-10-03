@@ -123,8 +123,15 @@ def product_analysis(df: pd.DataFrame) -> dict:
     summary = grouped.agg(
         total_quantity=("Quantity", "sum"),
         total_revenue=("Revenue", "sum"),
-        average_unit_price=("Unit_Price", "mean"),
-        sales_records=("Product", "size")
+        sales_records=("Product", "size"),
+        revenue_contribution_percentage=(
+            "Revenue",
+            lambda x: (x.sum() / df["Revenue"].sum()) * 100
+        )
+    )
+
+    summary["average_selling_price"] = (
+        summary["total_revenue"] / summary["total_quantity"]
     )
 
     return summary.to_dict(orient="index")
