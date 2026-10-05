@@ -23,6 +23,7 @@ we divide analysis in categories as follows :
 #############################################################
 
 import pandas as pd
+import numpy as np
 
 
 #############################################################
@@ -135,3 +136,230 @@ def product_analysis(df: pd.DataFrame) -> dict:
     )
 
     return summary.to_dict(orient="index")
+
+
+'''
+# 3. Time analysis
+
+Will divide in groups : "daily_analysis"
+                         "monthly_analysis"
+                         "product_time_analysis"
+                         "time_comparison"
+                         "trends"
+
+'''
+
+#############################################################
+#   Method Name : daily_analysis(df)
+#   Description : This method will calculate the daily analysis.
+#   Parameters  : df (pandas.DataFrame)
+#   Returns     : dict
+#   Author      : Sumit Shastri
+#   Date        : 03-10-2026
+#############################################################
+
+def daily_analysis(df: pd.DataFrame) -> dict:
+    df = df.copy()
+    df["Date"] = pd.to_datetime(df["Date"])
+
+    daily_summary = df.groupby(df["Date"].dt.date).agg(
+        total_quantity=("Quantity", "sum"),
+        total_revenue=("Revenue", "sum"),
+        sales_records=("Product", "size")
+    )
+
+    daily_summary["average_selling_price"] = (
+        daily_summary["total_revenue"] /
+        daily_summary["total_quantity"]
+    )
+
+    daily_summary.index = daily_summary.index.astype(str)
+
+    return daily_summary.to_dict(orient="index")
+
+
+#############################################################
+#   Method Name : monthly_analysis(df)
+#   Description : This method will calculate the monthly analysis.
+#   Parameters  : df (pandas.DataFrame)
+#   Returns     : dict
+#   Author      : Sumit Shastri
+#   Date        : 03-10-2026
+#############################################################
+
+def monthly_analysis(df: pd.DataFrame) -> dict:
+    df = df.copy()
+    df["Date"] = pd.to_datetime(df["Date"])
+
+    monthly_summary = df.groupby(df["Date"].dt.to_period("M")).agg(
+        total_quantity=("Quantity", "sum"),
+        total_revenue=("Revenue", "sum"),
+        sales_records=("Product", "size")
+    )
+
+    monthly_summary["average_selling_price"] = (
+        monthly_summary["total_revenue"] /
+        monthly_summary["total_quantity"]
+    )
+
+    monthly_summary.index = monthly_summary.index.astype(str)
+
+    return monthly_summary.to_dict(orient="index")
+
+
+#############################################################
+#   Method Name : product_time_analysis(df)
+#   Description : This method will return monthly quantity and 
+#                 revenue for each product.
+#   Parameters  : df (pandas.DataFrame)
+#   Returns     : dict
+#   Author      : Sumit Shastri
+#   Date        : 03-10-2026
+#############################################################
+
+def product_time_analysis(df: pd.DataFrame) -> dict:
+    df = df.copy()
+    df["Date"] = pd.to_datetime(df["Date"])
+
+    product_time_summary = df.groupby(
+        ["Product", df["Date"].dt.strftime("%Y-%m")]
+    ).agg(
+        total_quantity=("Quantity", "sum"),
+        total_revenue=("Revenue", "sum"),
+        sales_records=("Product", "size")
+    )
+
+    # Convert grouped DataFrame to nested dict
+    result = (
+        product_time_summary
+        .reset_index()
+        .groupby("Product")
+        .apply(lambda g: g.set_index("Date")[["total_quantity", "total_revenue", "sales_records"]].to_dict("index"))
+        .to_dict()
+    )
+
+    return result
+
+
+#############################################################
+#   Method Name : time_comparison(df)
+#   Description : This method compares the current month with
+#`                the previous month from the Daataframe and 
+#                 returns the comparison in a dictionary format.
+#   Parameters  : df (pandas.DataFrame)
+#   Returns     : dict
+#   Author      : Sumit Shastri
+#   Date        : 03-10-2026
+#############################################################
+
+def time_comparison(df: pd.DataFrame) -> dict:
+    df = df.copy()
+
+    df["Date"] = pd.to_datetime(df["Date"])
+
+    time_comparison_summary = (
+        df.groupby(df["Date"].dt.to_period("M"))
+        .agg(
+            revenue=("Revenue", "sum"),
+            quantity=("Quantity", "sum")
+        )
+        .sort_index()
+    )
+
+    result = {}
+
+    comparison_duos = len(time_comparison_summary) - 1
+
+    for i in range(comparison_duos):
+        previous_month = time_comparison_summary.index[i]
+        current_month = time_comparison_summary.index[i + 1]
+
+        previous_revenue = time_comparison_summary.loc[
+            previous_month, "revenue"
+        ]
+        current_revenue = time_comparison_summary.loc[
+            current_month, "revenue"
+        ]
+
+        previous_quantity = time_comparison_summary.loc[
+            previous_month, "quantity"
+        ]
+        current_quantity = time_comparison_summary.loc[
+            current_month, "quantity"
+        ]
+
+        revenue_change = (
+            ((current_revenue - previous_revenue) / previous_revenue) * 100
+            if previous_revenue != 0
+            else np.nan
+        )
+
+        quantity_change = (
+            ((current_quantity - previous_quantity) / previous_quantity) * 100
+            if previous_quantity != 0
+            else np.nan
+        )
+
+        result[f"{previous_month} to {current_month}"] = {
+            "revenue_change_percentage": revenue_change,
+            "quantity_change_percentage": quantity_change
+        }
+
+    return result
+
+
+
+#############################################################
+#   Method Name : trend(df)
+#   Description : This method will calculate the trend of 
+#                 revenue and quantity over time.
+#   Parameters  : df (pandas.DataFrame)
+#   Returns     : dict
+#   Author      : Sumit Shastri
+#   Date        : 05-10-2026
+#############################################################
+
+def trend(df: pd.DataFrame) -> dict:
+    data = time_comparison(df)
+
+    revenue_increases = 0
+    revenue_decreases = 0
+
+    quantity_increases = 0
+    quantity_decreases = 0
+
+    for comparison in data.values():
+
+        revenue_change = comparison["revenue_change_percentage"]
+        quantity_change = comparison["quantity_change_percentage"]
+
+        if not np.isnan(revenue_change):
+            if revenue_change > 0:
+                revenue_increases += 1
+            elif revenue_change < 0:
+                revenue_decreases += 1
+
+        if not np.isnan(quantity_change):
+            if quantity_change > 0:
+                quantity_increases += 1
+            elif quantity_change < 0:
+                quantity_decreases += 1
+
+    if revenue_increases > revenue_decreases:
+        revenue_trend = "Increasing"
+    elif revenue_decreases > revenue_increases:
+        revenue_trend = "Decreasing"
+    else:
+        revenue_trend = "Fluctuating"
+
+    if quantity_increases > quantity_decreases:
+        quantity_trend = "Increasing"
+    elif quantity_decreases > quantity_increases:
+        quantity_trend = "Decreasing"
+    else:
+        quantity_trend = "Fluctuating"
+
+    return {
+        "revenue_trend": revenue_trend,
+        "quantity_trend": quantity_trend
+    }
