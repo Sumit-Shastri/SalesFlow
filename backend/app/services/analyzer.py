@@ -384,3 +384,145 @@ def time_analysis(df: pd.DataFrame) -> dict:
         "time_comparison": time_comparison(df),
         "trends": trend(df)
     }
+
+'''
+# 4. Performance analysis
+
+Essentials : 
+    Revenue Ranking
+    Quantity Ranking
+    Revenue Contribution Percentage Ranking
+    Average Selling Price Ranking
+    Highest Revenue Product
+    Highest Quantity Product
+'''
+
+#############################################################
+#   Method Name : revenue_ranking(df)
+#   Description : This method returns the revenue ranking of
+#                 products in descending order.
+#   Parameters  : df (pandas.DataFrame)
+#   Returns     : list[dict]
+#   Author      : Sumit Shastri
+#   Date        : 05-10-2026
+#############################################################
+
+def revenue_ranking(df: pd.DataFrame) -> list[dict]:
+    revenue_ranking = (
+        df.groupby("Product")["Revenue"]
+        .sum()
+        .sort_values(ascending=False)
+        .reset_index()
+    )
+
+    return revenue_ranking.to_dict(orient="records")
+
+
+#############################################################
+#   Method Name : quantity_ranking(df)
+#   Description : This method returns the quantity ranking of
+#                 products in descending order.
+#   Parameters  : df (pandas.DataFrame)
+#   Returns     : list[dict]
+#   Author      : Sumit Shastri
+#   Date        : 05-10-2026
+#############################################################
+
+def quantity_ranking(df: pd.DataFrame) -> list[dict]:
+    quantity_ranking = (
+        df.groupby("Product")["Quantity"]
+        .sum()
+        .sort_values(ascending=False)
+        .reset_index()
+    )
+
+    return quantity_ranking.to_dict(orient="records")
+
+
+#############################################################
+#   Method Name : revenue_contribution_ranking(df)
+#   Description : This method returns the revenue contribution
+#                 ranking of products in descending order.
+#   Parameters  : df (pandas.DataFrame)
+#   Returns     : list[dict]
+#   Author      : Sumit Shastri
+#   Date        : 05-10-2026
+#############################################################
+
+def revenue_contribution_ranking(df: pd.DataFrame) -> list[dict]:
+    total_revenue = df["Revenue"].sum()
+
+    revenue_contribution_ranking = (
+        df.groupby("Product")["Revenue"]
+        .sum()
+        .apply(lambda x: (x / total_revenue) * 100)
+        .sort_values(ascending=False)
+        .reset_index()
+    )
+
+    return revenue_contribution_ranking.to_dict(orient="records")
+
+
+#############################################################
+#   Method Name : average_selling_price_ranking(df)
+#   Description : This method returns the weighted average 
+#                 selling price ranking of products in descending
+#                 order.
+#   Parameters  : df (pandas.DataFrame)
+#   Returns     : list[dict]
+#   Author      : Sumit Shastri
+#   Date        : 05-10-2026
+#############################################################
+
+def average_selling_price_ranking(df: pd.DataFrame) -> list[dict]:
+    average_selling_price_ranking = (
+        df.groupby("Product")
+        .agg(
+            total_revenue=("Revenue", "sum"),
+            total_quantity=("Quantity", "sum")
+        )
+    )
+
+    average_selling_price_ranking["average_selling_price"] = (
+        average_selling_price_ranking["total_revenue"]
+        / average_selling_price_ranking["total_quantity"]
+    )
+
+    average_selling_price_ranking = (
+        average_selling_price_ranking["average_selling_price"]
+        .sort_values(ascending=False)
+        .reset_index()
+    )
+
+    return average_selling_price_ranking.to_dict(orient="records")
+
+
+#############################################################
+#   Method Name : performance_analysis(df)
+#   Description : This method returns brief summary of Performance 
+#                 analysis which revenue ranking, quantity ranking,
+#                 revenue contribution percentage ranking, average 
+#                 selling price ranking, highest revenue product 
+#                 and highest quantity product.
+#   Parameters  : df (pandas.DataFrame)
+#   Returns     : dict
+#   Author      : Sumit Shastri
+#   Date        : 05-10-2026
+#############################################################
+
+def performance_analysis(df: pd.DataFrame) -> dict:
+
+    revenue_rank = revenue_ranking(df)
+    quantity_rank = quantity_ranking(df)
+
+    highest_revenue_product = revenue_rank[0] if revenue_rank else None
+    highest_quantity_product = quantity_rank[0] if quantity_rank else None
+
+    return {
+        "revenue_ranking": revenue_rank,
+        "quantity_ranking": quantity_rank,
+        "revenue_contribution_ranking": revenue_contribution_ranking(df),
+        "average_selling_price_ranking": average_selling_price_ranking(df),
+        "highest_revenue_product": highest_revenue_product,
+        "highest_quantity_product": highest_quantity_product
+    }
