@@ -363,3 +363,24 @@ def trend(df: pd.DataFrame) -> dict:
         "revenue_trend": revenue_trend,
         "quantity_trend": quantity_trend
     }
+
+
+#############################################################
+#   Method Name : time_analysis(df)
+#   Description : This method returns brief summary of time 
+#                 analysis which includes daily, monthly, product
+#                 time analysis, time comparison and trends.
+#   Parameters  : df (pandas.DataFrame)
+#   Returns     : dict
+#   Author      : Sumit Shastri
+#   Date        : 05-10-2026
+#############################################################
+
+def time_analysis(df: pd.DataFrame) -> dict:
+    return {
+        "daily_analysis": daily_analysis(df),
+        "monthly_analysis": monthly_analysis(df),
+        "product_time_analysis": product_time_analysis(df),
+        "time_comparison": time_comparison(df),
+        "trends": trend(df)
+    }
