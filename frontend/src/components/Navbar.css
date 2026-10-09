@@ -1,0 +1,121 @@
+/*
+#############################################################
+
+# Styles
+
+#############################################################
+
+#############################################################
+
+# Style Name  : .navbar
+
+# Description : Styles the main navigation bar by arranging
+
+# the logo, navigation links, and button in a
+
+# horizontal layout with proper spacing.
+
+# Parameters  : None
+
+# Returns     : CSS styling rules
+
+# Author      : vishwajeet Dupargude
+
+# Date        : 10-9-2026
+
+#############################################################
+
+
+*/
+
+
+.navbar {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 24px;
+padding: 20px 8%;
+background: #ffffff;
+border-bottom: 1px solid #e8edf3;
+}
+
+.logo {
+display: flex;
+align-items: center;
+gap: 10px;
+color: #172b4d;
+text-decoration: none;
+font-size: 23px;
+font-weight: 800;
+letter-spacing: -0.7px;
+}
+
+.logo-icon {
+display: grid;
+place-items: center;
+width: 38px;
+height: 38px;
+border-radius: 11px;
+background: #2563eb;
+color: white;
+font-size: 22px;
+}
+
+.nav-links {
+display: flex;
+align-items: center;
+gap: 34px;
+}
+
+.nav-links a {
+color: #64748b;
+text-decoration: none;
+font-size: 14px;
+font-weight: 500;
+transition: color 0.2s ease;
+}
+
+.nav-links a:hover {
+color: #2563eb;
+}
+
+.nav-button {
+padding: 12px 18px;
+border-radius: 9px;
+background: #2563eb;
+color: white;
+text-decoration: none;
+font-size: 14px;
+font-weight: 600;
+transition: background 0.2s ease;
+}
+
+.nav-button:hover {
+background: #1d4ed8;
+}
+
+.nav-button span {
+margin-left: 8px;
+}
+
+@media (max-width: 650px) {
+.navbar {
+flex-wrap: wrap;
+padding: 18px 5%;
+}
+
+.nav-links {
+order: 3;
+width: 100%;
+justify-content: center;
+gap: 20px;
+}
+
+.logo {
+font-size: 20px;
+}
+
+.nav-button {
+padding: 10px 12px;
+}
+}
