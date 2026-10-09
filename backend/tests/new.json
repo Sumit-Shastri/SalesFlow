@@ -1,0 +1,22 @@
+{
+    '2026-01 to 2026-02': {
+        'revenue_change_percentage': np.float64(-7.117007490612186),
+         'quantity_change_percentage': np.float64(-8.24130692707858)
+        },
+    '2026-02 to 2026-03': {
+        'revenue_change_percentage': np.float64(11.296394031815408),
+         'quantity_change_percentage': np.float64(11.776407400039785)
+        },
+    '2026-03 to 2026-04': {
+        'revenue_change_percentage': np.float64(-14.92371540294698),
+         'quantity_change_percentage': np.float64(-11.785904965296316)
+        },
+    '2026-04 to 2026-05': {
+        'revenue_change_percentage': np.float64(9.827610896032326),
+         'quantity_change_percentage': np.float64(5.507641095475866)
+        },
+    '2026-05 to 2026-06': {
+        'revenue_change_percentage': np.float64(-6.272449434395481),
+         'quantity_change_percentage': np.float64(-7.280462737224533)
+        }
+}
