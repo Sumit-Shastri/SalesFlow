@@ -884,3 +884,27 @@ def growth_analysis(df: pd.DataFrame) -> dict:
         "monthly_product_growth": monthly_product_growth(df),
         "growth_summary": growth_summary(df)
         }   
+
+
+#############################################################
+#   Method Name : run_full_analysis(df)
+#   Description : This is the final method which will run the
+#                 full analysis on the DataFrame and return 
+#                 the result in a dictionary format.
+#   Parameters  : df (pandas.DataFrame)
+#   Returns     : dict
+#   Author      : Sumit Shastri
+#   Date        : 09-10-2026
+#############################################################
+
+def run_full_analysis(df: pd.DataFrame) -> dict:
+
+    df = add_revenue_column(df)
+
+    return {
+        "overall_kpis": overall_kpis(df),
+        "product_analysis": product_analysis(df),
+        "time_analysis": time_analysis(df),
+        "performance_analysis": performance_analysis(df),
+        "growth_analysis": growth_analysis(df)
+    }
