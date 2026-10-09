@@ -15,7 +15,6 @@ we divide analysis in categories as follows :
     3. Time Analysis
     4. Performance Analysis
     5. Growth Analysis
-    6. Best and Worst Analysis
 """
 
 #############################################################
@@ -244,7 +243,7 @@ def product_time_analysis(df: pd.DataFrame) -> dict:
 #############################################################
 #   Method Name : time_comparison(df)
 #   Description : This method compares the current month with
-#`                the previous month from the Daataframe and 
+#`                the previous month from the Dataframe and 
 #                 returns the comparison in a dictionary format.
 #   Parameters  : df (pandas.DataFrame)
 #   Returns     : dict
@@ -526,3 +525,362 @@ def performance_analysis(df: pd.DataFrame) -> dict:
         "highest_revenue_product": highest_revenue_product,
         "highest_quantity_product": highest_quantity_product
     }
+
+
+'''
+# 5. Growth analysis
+
+Essentials : 
+    Monthly Revenue Growth
+    Monthly Quantity Growth
+    Monthly product growth
+    Growth Summary /
+        overall revenue growth percentage
+        average monthly revenue growth percentage
+        overall quantity growth percentage
+        highest revenue growth product
+        highest revenue growth rate
+        lowest revenue growth product
+        lowest revenue growth rate
+
+'''
+
+#############################################################
+#   Method Name : monthly_revenue_growth(df)
+#   Description : This method calculates the monthly revenue
+#                 growth percentage for each month in the DataFrame.
+#   Parameters  : df (pandas.DataFrame)
+#   Returns     : dict
+#   Author      : Sumit Shastri
+#   Date        : 09-10-2026
+#############################################################
+
+def monthly_revenue_growth(df: pd.DataFrame) -> dict:
+
+    df = df.copy()
+    df["Date"] = pd.to_datetime(df["Date"])
+
+    monthly_revenue = (
+        df.groupby(df["Date"].dt.to_period("M"))["Revenue"]
+        .sum()
+        .sort_index()
+    )
+
+    monthly_growth = monthly_revenue.pct_change() * 100
+
+    return {
+        str(month): {
+            "revenue": revenue,
+            "growth_percentage": (
+                float(growth) if np.isfinite(growth) else None
+            )
+        }
+        for month, revenue, growth in zip(
+            monthly_revenue.index,
+            monthly_revenue.values,
+            monthly_growth.values
+        )
+    }
+
+
+#############################################################
+#   Method Name : monthly_quantity_growth(df)
+#   Description : This method calculates the monthly quantity
+#                 growth percentage for each month in the DataFrame.
+#   Parameters  : df (pandas.DataFrame)
+#   Returns     : dict
+#   Author      : Sumit Shastri
+#   Date        : 09-10-2026
+#############################################################
+
+def monthly_quantity_growth(df: pd.DataFrame) -> dict:
+
+    df = df.copy()
+    df["Date"] = pd.to_datetime(df["Date"])
+
+    monthly_quantity = (
+        df.groupby(df["Date"].dt.to_period("M"))["Quantity"]
+        .sum()
+        .sort_index()
+    )
+
+    monthly_growth = monthly_quantity.pct_change() * 100
+
+    return {
+        str(month): {
+            "quantity": quantity,
+            "growth_percentage": (
+                float(growth) if np.isfinite(growth) else None
+            )
+        }
+        for month, quantity, growth in zip(
+            monthly_quantity.index,
+            monthly_quantity.values,
+            monthly_growth.values
+        )
+    }
+
+
+#############################################################
+#   Method Name : monthly_product_growth(df)
+#   Description : This method calculates the monthly product
+#                 revenue , and product growth percentage for 
+#                 each product and each month in the DataFrame.
+#   Parameters  : df (pandas.DataFrame)
+#   Returns     : dict
+#   Author      : Sumit Shastri
+#   Date        : 09-10-2026
+#############################################################
+
+def monthly_product_growth(df: pd.DataFrame) -> dict:
+
+    df = df.copy()
+    df["Date"] = pd.to_datetime(df["Date"])
+
+    df["Year_Month"] = df["Date"].dt.to_period("M")
+
+    # Aggregate monthly revenue for each product
+    monthly_data = (
+        df.groupby(["Product", "Year_Month"])["Revenue"]
+        .sum()
+        .reset_index()
+        .sort_values(by=["Product", "Year_Month"])
+    )
+
+    # Calculate growth separately for each product
+    monthly_data["Growth_Rate"] = (
+        monthly_data.groupby("Product")["Revenue"]
+        .pct_change() * 100
+    )
+
+    # Replace non-finite growth values with missing values
+    monthly_data["Growth_Rate"] = monthly_data["Growth_Rate"].where(
+        np.isfinite(monthly_data["Growth_Rate"]),
+        np.nan
+    )
+
+    # Convert Year_Month to string for the output
+    monthly_data["Year_Month"] = monthly_data["Year_Month"].astype(str)
+
+    output_dict = {}
+
+    for product, group in monthly_data.groupby("Product"):
+
+        output_dict[product] = {}
+
+        for _, row in group.iterrows():
+
+            growth = row["Growth_Rate"]
+
+            output_dict[product][row["Year_Month"]] = {
+                "revenue": float(row["Revenue"]),
+                "growth_percentage": (
+                    float(growth) if pd.notna(growth) else None
+                )
+            }
+
+    return output_dict
+
+#############################################################
+#   Method Name : growth_summary(df)
+#   Description : This method calculates the overall growth 
+#                 summary including overall revenue growth
+#                 percentage, overall quantity growth percentage,
+#                 highest revenue growth product, highest revenue
+#                 growth rate, lowest revenue growth product, and
+#                 lowest revenue growth rate.
+#   Parameters  : df (pandas.DataFrame)
+#   Returns     : dict
+#   Author      : Sumit Shastri
+#   Date        : 09-10-2026
+#############################################################
+
+def growth_summary(df: pd.DataFrame) -> dict:
+    df = df.copy()
+
+    if df.empty:
+        return {
+            "overall_revenue_growth_percentage": None,
+            "average_monthly_revenue_growth_percentage": None,
+            "overall_quantity_growth_percentage": None,
+            "highest_revenue_growth_product": None,
+            "highest_revenue_growth_rate": None,
+            "lowest_revenue_growth_product": None,
+            "lowest_revenue_growth_rate": None
+        }
+
+    df["Date"] = pd.to_datetime(df["Date"])
+
+    # --------------------------------------------------
+    # 1. Prepare a continuous monthly timeline
+    # --------------------------------------------------
+
+    df["Year_Month"] = df["Date"].dt.to_period("M")
+
+    all_months = pd.period_range(
+        start=df["Year_Month"].min(),
+        end=df["Year_Month"].max(),
+        freq="M"
+    )
+
+    # --------------------------------------------------
+    # 2. Monthly revenue and quantity
+    # --------------------------------------------------
+
+    monthly_summary = (
+        df.groupby("Year_Month")
+        .agg(
+            revenue=("Revenue", "sum"),
+            quantity=("Quantity", "sum")
+        )
+        .reindex(all_months, fill_value=0)
+    )
+
+    # Revenue growth
+    monthly_revenue_growth_rates = (
+        monthly_summary["revenue"].pct_change() * 100
+    )
+
+    valid_revenue_growth = monthly_revenue_growth_rates[
+        np.isfinite(monthly_revenue_growth_rates)
+    ]
+
+    average_monthly_revenue_growth_percentage = (
+        float(valid_revenue_growth.mean())
+        if not valid_revenue_growth.empty
+        else None
+    )
+
+    if len(monthly_summary) >= 2:
+        first_revenue = monthly_summary["revenue"].iloc[0]
+        last_revenue = monthly_summary["revenue"].iloc[-1]
+
+        overall_revenue_growth_percentage = (
+            float((last_revenue - first_revenue) / first_revenue * 100)
+            if first_revenue != 0
+            else None
+        )
+
+        first_quantity = monthly_summary["quantity"].iloc[0]
+        last_quantity = monthly_summary["quantity"].iloc[-1]
+
+        overall_quantity_growth_percentage = (
+            float((last_quantity - first_quantity) / first_quantity * 100)
+            if first_quantity != 0
+            else None
+        )
+
+    else:
+        overall_revenue_growth_percentage = None
+        overall_quantity_growth_percentage = None
+
+    # --------------------------------------------------
+    # 3. Compare products over the same two months
+    # --------------------------------------------------
+
+    if len(all_months) >= 2:
+
+        previous_month = all_months[-2]
+        latest_month = all_months[-1]
+
+        product_monthly_revenue = (
+            df.groupby(["Product", "Year_Month"])["Revenue"]
+            .sum()
+            .unstack(fill_value=0)
+            .reindex(columns=all_months, fill_value=0)
+        )
+
+        previous_revenue = product_monthly_revenue[previous_month]
+        latest_revenue = product_monthly_revenue[latest_month]
+
+        # Percentage growth is undefined when previous revenue is zero.
+        valid_products = previous_revenue > 0
+
+        product_growth_rates = (
+            (latest_revenue[valid_products]
+             - previous_revenue[valid_products])
+            / previous_revenue[valid_products]
+        ) * 100
+
+        product_growth_rates = product_growth_rates[
+            np.isfinite(product_growth_rates)
+        ]
+
+    else:
+        product_growth_rates = pd.Series(dtype=float)
+
+    # --------------------------------------------------
+    # 4. Highest and lowest revenue-growth products
+    # --------------------------------------------------
+
+    if not product_growth_rates.empty:
+
+        highest_revenue_growth_product = (
+            product_growth_rates.idxmax()
+        )
+
+        highest_revenue_growth_rate = float(
+            product_growth_rates.max()
+        )
+
+        lowest_revenue_growth_product = (
+            product_growth_rates.idxmin()
+        )
+
+        lowest_revenue_growth_rate = float(
+            product_growth_rates.min()
+        )
+
+    else:
+        highest_revenue_growth_product = None
+        highest_revenue_growth_rate = None
+        lowest_revenue_growth_product = None
+        lowest_revenue_growth_rate = None
+
+    # --------------------------------------------------
+    # 5. Return summary
+    # --------------------------------------------------
+
+    return {
+        "overall_revenue_growth_percentage":
+            overall_revenue_growth_percentage,
+
+        "average_monthly_revenue_growth_percentage":
+            average_monthly_revenue_growth_percentage,
+
+        "overall_quantity_growth_percentage":
+            overall_quantity_growth_percentage,
+
+        "highest_revenue_growth_product":
+            highest_revenue_growth_product,
+
+        "highest_revenue_growth_rate":
+            highest_revenue_growth_rate,
+
+        "lowest_revenue_growth_product":
+            lowest_revenue_growth_product,
+
+        "lowest_revenue_growth_rate":
+            lowest_revenue_growth_rate
+    }
+
+#############################################################
+#   Method Name : growth_summary(df)
+#   Description : This method returns the overall growth analysis
+#                 including monthly revenue growth, monthly 
+#                 quantity growth, monthly product growth, 
+#                 and a growth summary.
+#   Parameters  : df (pandas.DataFrame)
+#   Returns     : dict
+#   Author      : Sumit Shastri
+#   Date        : 09-10-2026
+#############################################################
+
+def growth_analysis(df: pd.DataFrame) -> dict:
+
+    return {
+        "monthly_revenue_growth": monthly_revenue_growth(df),
+        "monthly_quantity_growth": monthly_quantity_growth(df),
+        "monthly_product_growth": monthly_product_growth(df),
+        "growth_summary": growth_summary(df)
+        }   
