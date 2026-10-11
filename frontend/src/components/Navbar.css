@@ -1,121 +1,256 @@
-/*
-#############################################################
-
-# Styles
-
-#############################################################
-
-#############################################################
-
-# Style Name  : .navbar
-
-# Description : Styles the main navigation bar by arranging
-
-# the logo, navigation links, and button in a
-
-# horizontal layout with proper spacing.
-
-# Parameters  : None
-
-# Returns     : CSS styling rules
-
-# Author      : vishwajeet Dupargude
-
-# Date        : 10-9-2026
-
-#############################################################
-
-
-*/
-
+/* Navbar */
 
 .navbar {
-display: flex;
-align-items: center;
-justify-content: space-between;
-gap: 24px;
-padding: 20px 8%;
-background: #ffffff;
-border-bottom: 1px solid #e8edf3;
+  width: 100%;
+  height: 126px;
+  padding: 0 5.7% 0 11.3%;
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+
+  font-family: Arial, Helvetica, sans-serif;
+
+  position: relative;
+  z-index: 100;
 }
 
+/* Logo */
+
 .logo {
-display: flex;
-align-items: center;
-gap: 10px;
-color: #172b4d;
-text-decoration: none;
-font-size: 23px;
-font-weight: 800;
-letter-spacing: -0.7px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  text-decoration: none;
+  transform: translateY(8px);
+
+  transition: transform 0.3s ease;
 }
 
 .logo-icon {
-display: grid;
-place-items: center;
-width: 38px;
-height: 38px;
-border-radius: 11px;
-background: #2563eb;
-color: white;
-font-size: 22px;
+  width: 62px;
+  height: 62px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 17px;
+
+  background: linear-gradient(
+    135deg,
+    #304dff,
+    #1769ff,
+    #168dff
+  );
+
+  color: #ffffff;
+  font-size: 43px;
+  font-weight: 800;
+
+  box-shadow: 0 5px 15px rgba(37, 99, 235, 0.15);
 }
 
-.nav-links {
-display: flex;
-align-items: center;
-gap: 34px;
+.logo-text {
+  color: #102044;
+  font-size: 37px;
+  font-weight: 750;
+  letter-spacing: -1.2px;
 }
 
-.nav-links a {
-color: #64748b;
-text-decoration: none;
-font-size: 14px;
-font-weight: 500;
-transition: color 0.2s ease;
+/* Right-side actions */
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 46px;
 }
 
-.nav-links a:hover {
-color: #2563eb;
+/* Contact Us */
+
+.contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 15px;
+
+  padding: 10px 0;
+
+  border: none;
+  background: transparent;
+
+  color: #102044;
+  font-size: 20px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: color 0.25s ease;
 }
+
+.phone-icon {
+  color: #2457ff;
+  flex-shrink: 0;
+}
+
+.contact-link:hover {
+  color: #2457ff;
+}
+
+/* Get Started */
 
 .nav-button {
-padding: 12px 18px;
-border-radius: 9px;
-background: #2563eb;
-color: white;
-text-decoration: none;
-font-size: 14px;
-font-weight: 600;
-transition: background 0.2s ease;
+  min-width: 213px;
+  height: 59px;
+  padding: 0 28px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 19px;
+
+  box-sizing: border-box;
+
+  background: linear-gradient(
+    100deg,
+    #304dff,
+    #2457f5
+  );
+
+  color: #ffffff;
+  text-decoration: none;
+
+  font-size: 17px;
+  font-weight: 700;
+
+  border-radius: 35px;
+
+  box-shadow: 0 5px 14px rgba(37, 99, 235, 0.12);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
 }
 
 .nav-button:hover {
-background: #1d4ed8;
+  transform: translateY(-2px);
+  box-shadow: 0 9px 22px rgba(37, 99, 235, 0.25);
 }
 
-.nav-button span {
-margin-left: 8px;
+.arrow {
+  font-size: 27px;
+  line-height: 1;
+
+  transition: transform 0.25s ease;
 }
 
-@media (max-width: 650px) {
-.navbar {
-flex-wrap: wrap;
-padding: 18px 5%;
+.nav-button:hover .arrow {
+  transform: translateX(4px);
 }
 
-.nav-links {
-order: 3;
-width: 100%;
-justify-content: center;
-gap: 20px;
+/* Tablet */
+
+@media (max-width: 900px) {
+  .navbar {
+    height: 100px;
+    padding: 0 5%;
+  }
+
+  .logo {
+    gap: 10px;
+  }
+
+  .logo-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 33px;
+    border-radius: 13px;
+  }
+
+  .logo-text {
+    font-size: 28px;
+  }
+
+  .nav-actions {
+    gap: 24px;
+  }
+
+  .contact-link {
+    font-size: 16px;
+    gap: 8px;
+  }
+
+  .nav-button {
+    min-width: 155px;
+    height: 48px;
+    padding: 0 18px;
+    font-size: 14px;
+    gap: 10px;
+  }
+
+  .arrow {
+    font-size: 22px;
+  }
 }
 
-.logo {
-font-size: 20px;
-}
+/* Mobile */
 
-.nav-button {
-padding: 10px 12px;
-}
+@media (max-width: 560px) {
+  .navbar {
+    min-height: 115px;
+    height: auto;
+    padding: 15px 5%;
+
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+  }
+
+  .logo {
+    justify-content: center;
+    width: 100%;
+    transform: translateY(3px);
+  }
+
+  .logo-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 27px;
+  }
+
+  .logo-text {
+    font-size: 25px;
+  }
+
+  .nav-actions {
+    width: 100%;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .contact-link {
+    font-size: 14px;
+    gap: 6px;
+  }
+
+  .phone-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .nav-button {
+    min-width: auto;
+    height: 42px;
+    padding: 0 15px;
+    font-size: 13px;
+    gap: 8px;
+  }
+
+  .arrow {
+    font-size: 19px;
+  }
 }
