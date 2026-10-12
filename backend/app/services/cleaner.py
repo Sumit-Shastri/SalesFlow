@@ -171,3 +171,19 @@ def standardize_column_order(df, required_columns):
     df = df[required_columns]
 
     return df
+
+#############################################################
+#   Method Name : sort_date()
+#   Description : This method sorts dates in "Date" column
+#                 in chronological order.
+#   Parameters  : df (pandas.DataFrame), required_columns (list)
+#   Returns     : pandas.DataFrame
+#   Author      : Sumit Shastri
+#   Date        : 12-10-2026
+#############################################################
+
+def sort_date(df):
+
+    df = df.sort_values(by="Date").reset_index(drop=True)
+
+    return df
