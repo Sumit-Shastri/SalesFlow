@@ -1,0 +1,146 @@
+{
+  "overall_kpis": {
+    "total_revenue": 152340.75,
+    "total_units_sold": 4820,
+    "average_unit_price": 31.6,
+    "number_of_products": 5,
+    "number_of_sales_records": 1200,
+    "average_revenue_per_record": 126.95
+  },
+
+  "product_analysis": {
+    "Product A": {
+      "total_quantity": 1500,
+      "total_revenue": 45000,
+      "sales_records": 300,
+      "revenue_contribution_percentage": 29.5,
+      "average_selling_price": 30.0
+    },
+    "Product B": {
+      "total_quantity": 1200,
+      "total_revenue": 36000,
+      "sales_records": 250,
+      "revenue_contribution_percentage": 23.6,
+      "average_selling_price": 30.0
+    }
+    // ... other products
+  },
+
+  "time_analysis": {
+    "daily_analysis": {
+      "2026-10-01": {
+        "total_quantity": 200,
+        "total_revenue": 6200,
+        "sales_records": 50,
+        "average_selling_price": 31.0
+      },
+      "2026-10-02": {
+        "total_quantity": 180,
+        "total_revenue": 5400,
+        "sales_records": 45,
+        "average_selling_price": 30.0
+      }
+    },
+    "monthly_analysis": {
+      "2026-09": {
+        "total_quantity": 2200,
+        "total_revenue": 68000,
+        "sales_records": 550,
+        "average_selling_price": 30.9
+      },
+      "2026-10": {
+        "total_quantity": 2620,
+        "total_revenue": 84340,
+        "sales_records": 650,
+        "average_selling_price": 32.2
+      }
+    },
+    "product_time_analysis": {
+      "Product A": {
+        "2026-09": {
+          "total_quantity": 700,
+          "total_revenue": 21000,
+          "sales_records": 140
+        },
+        "2026-10": {
+          "total_quantity": 800,
+          "total_revenue": 24000,
+          "sales_records": 160
+        }
+      },
+      "Product B": {
+        "2026-09": {
+          "total_quantity": 600,
+          "total_revenue": 18000,
+          "sales_records": 120
+        },
+        "2026-10": {
+          "total_quantity": 600,
+          "total_revenue": 18000,
+          "sales_records": 130
+        }
+      }
+    },
+    "time_comparison": {
+      "2026-09 to 2026-10": {
+        "revenue_change_percentage": 24.0,
+        "quantity_change_percentage": 19.1
+      }
+    },
+    "trends": {
+      "revenue_trend": "Increasing",
+      "quantity_trend": "Increasing"
+    }
+  },
+
+  "performance_analysis": {
+    "revenue_ranking": [
+      { "Product": "Product A", "Revenue": 45000 },
+      { "Product": "Product B", "Revenue": 36000 }
+    ],
+    "quantity_ranking": [
+      { "Product": "Product A", "Quantity": 1500 },
+      { "Product": "Product B", "Quantity": 1200 }
+    ],
+    "revenue_contribution_ranking": [
+      { "Product": "Product A", "Revenue": 29.5 },
+      { "Product": "Product B", "Revenue": 23.6 }
+    ],
+    "average_selling_price_ranking": [
+      { "Product": "Product A", "average_selling_price": 30.0 },
+      { "Product": "Product B", "average_selling_price": 30.0 }
+    ],
+    "highest_revenue_product": { "Product": "Product A", "Revenue": 45000 },
+    "highest_quantity_product": { "Product": "Product A", "Quantity": 1500 }
+  },
+
+  "growth_analysis": {
+    "monthly_revenue_growth": {
+      "2026-09": { "revenue": 68000, "growth_percentage": null },
+      "2026-10": { "revenue": 84340, "growth_percentage": 24.0 }
+    },
+    "monthly_quantity_growth": {
+      "2026-09": { "quantity": 2200, "growth_percentage": null },
+      "2026-10": { "quantity": 2620, "growth_percentage": 19.1 }
+    },
+    "monthly_product_growth": {
+      "Product A": {
+        "2026-09": { "revenue": 21000, "growth_percentage": null },
+        "2026-10": { "revenue": 24000, "growth_percentage": 14.3 }
+      },
+      "Product B": {
+        "2026-09": { "revenue": 18000, "growth_percentage": null },
+        "2026-10": { "revenue": 18000, "growth_percentage": 0.0 }
+      }
+    },
+    "growth_summary": {
+      "overall_revenue_growth_percentage": 24.0,
+      "average_monthly_revenue_growth_percentage": 24.0,
+      "overall_quantity_growth_percentage": 19.1,
+      "highest_revenue_growth_product": "Product A",
+      "highest_revenue_growth_rate": 14.3,
+      "lowest_revenue_growth_product": "Product B",
+      "lowest_revenue_growth_rate": 0.0
+    }
+  }
+}
