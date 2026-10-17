@@ -187,3 +187,35 @@ def report_cover(
     }
 
     return report_cover
+
+
+
+"""
+Section 2 : Executive Summary
+        - Total revenue
+        - Total units sold
+        - Number of products
+        - overall revenue growth
+        - one or two important findings
+        - a brief overall performance summary.
+
+        << The AI component can eventually generate the 
+        written summary using the verified metrics from your Analyzer.>>
+"""
+
+def executive_summary(data):
+
+    total_revenue = data["overall_kpis"]["total_revenue"]
+
+    total_units_sold = data["overall_kpis"]["total_units_sold"]
+
+    number_of_products = data["overall_kpis"]["number_of_products"]
+
+    overall_revenue_growth = data["growth_analysis"]["growth_summary"]["overall_revenue_growth_percentage"]
+
+    return {
+        "total_revenue" : total_revenue,
+        "total_units_sold" : total_units_sold,
+        "number_of_products" : number_of_products,
+        "overall_revenue_growth" : overall_revenue_growth
+    }
