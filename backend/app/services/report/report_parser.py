@@ -510,3 +510,169 @@ def monthly_performance_analysis(data):
         "highest_revenue_day" : highest_revenue_day,
         "lowest_revenue_day" : lowest_revenue_day
     }
+
+"""
+Section 6 : Growth Analysis
+
+        ~ Is the business growing or declining, and which products 
+          are experiencing the largest changes?
+
+        - overall revenue change
+        - average monthly revenue growth
+        - overall quantity growth
+        - highest growth product
+        - lowest growth product
+
+        - Written analysis (Ai component)
+"""
+
+#############################################################
+#   Method Name : growth_analysis()
+#   Description : This Method parse's all details needed for 
+#                 section 6 -> "Growth Analysis"
+#                 and returns it in dictionary format.
+#                 dictionary conatining data and charts.
+#   Parameters  : data -> dictionary
+#   Returns     : pandas.DataFrame
+#   Author      : Sumit Shastri
+#   Date        : 17-10-2026
+#############################################################
+
+def growth_analysis(data):
+
+    # LATEST MoM REVENUE GROWTH
+
+    monthly_comparison_data = data["time_analysis"]["time_comparison"]
+
+    raw_date_value = next(reversed(monthly_comparison_data))
+
+    date_str1, date_str2 = raw_date_value.split(" to ")
+
+    date1 = datetime.strptime(date_str1, "%Y-%m")
+    prev_month = date1.strftime("%B %Y")
+
+    date2 = datetime.strptime(date_str2, "%Y-%m")
+    next_month = date2.strftime("%B %Y")
+
+    revenue_growth_value = monthly_comparison_data[raw_date_value]["revenue_change_percentage"]
+
+    latest_MoM_growth = {
+        "latest_MoM_growth_revenue": (
+            f"{revenue_growth_value:+.2f}%"
+            if revenue_growth_value is not None
+            else None
+        ),
+        "prev_month": prev_month,
+        "next_month": next_month
+    }
+
+    #REVENUE CHANGE
+    revenue_change_data = data["growth_analysis"]["monthly_revenue_growth"]
+    r_next_m, r_prev_m = [
+    month["revenue"]
+    for month in list(revenue_change_data.values())[-2:]
+    ]
+
+    revenue_change = r_next_m - r_prev_m
+
+    # QUANTITY GROWTH
+
+    quantity_change_data = data["growth_analysis"]["monthly_quantity_growth"]
+    q_next_m, q_prev_m = [
+    month["quantity"]
+    for month in list(quantity_change_data.values())[-2:]
+    ]
+
+    quantity_change = q_next_m - q_prev_m
+    quantity_growth_percentage = next(reversed(quantity_change.values()))["growth_percentage"]
+
+    quantity_growth = {
+        "unit_change" : quantity_change,
+        "percentage" : quantity_growth_percentage
+    }
+
+    # AVG MONTHLY REVENUE GROWTH
+
+    avg_monthly_revenue_growth = data["growth_analysis"]["growth_summary"]["average_monthly_revenue_growth_percentage"]
+
+    # Product Revenue Growth Chart
+
+    product_data = data["time_analysis"]["product_time_analysis"]
+
+    rows = []
+    for product, months in product_data.items():
+        # Get last two months only
+        sorted_months = sorted(months.keys())
+        if len(sorted_months) < 2:
+            continue  # skip if not enough data
+
+        last_two = sorted_months[-2:]
+        prev, curr = last_two[0], last_two[1]
+
+        prev_rev = months[prev]["total_revenue"]
+        curr_rev = months[curr]["total_revenue"]
+        prev_qty = months[prev]["total_quantity"]
+        curr_qty = months[curr]["total_quantity"]
+
+        rev_change = curr_rev - prev_rev
+        qty_change = curr_qty - prev_qty
+
+        rev_growth_pct = (rev_change / prev_rev * 100) if prev_rev else 0
+        qty_growth_pct = (qty_change / prev_qty * 100) if prev_qty else 0
+
+        rows.append([
+            product,
+            f"₹{prev_rev:,.2f}",
+            f"₹{curr_rev:,.2f}",
+            f"{'+' if rev_change>=0 else ''}₹{rev_change:,.2f}",
+            f"{rev_growth_pct:+.1f}%",
+            f"{qty_growth_pct:+.1f}%"
+        ])
+
+    # Build DataFrame
+    df = pd.DataFrame(rows, columns=[
+        "Product", "Sep revenue", "Oct revenue",
+        "Revenue change", "Revenue growth", "Unit growth"
+    ])
+
+    # --- Create Table Plot ---
+    fig, ax = plt.subplots(figsize=(10, 4))
+    ax.axis("off")
+
+    table = ax.table(
+        cellText=df.values,
+        colLabels=df.columns,
+        cellLoc="center",
+        loc="center"
+    )
+
+    table.auto_set_font_size(False)
+    table.set_fontsize(10)
+    table.scale(1.2, 1.2)
+
+    ax.set_title("Product Revenue Growth (Last 2 Months)", fontsize=14, fontweight="bold")
+
+    # Save to buffer
+    buffer = BytesIO()
+    plt.savefig(buffer, format="png", dpi=300, bbox_inches="tight")
+    plt.close(fig)
+    buffer.seek(0)
+
+    highest_revenue_growth_product = data["growth_analysis"]["growth_summary"]["highest_revenue_growth_product"]
+    highest_revenue_growth_rate = data["growth_analysis"]["growth_summary"]["highest_revenue_growth_rate"]
+
+    lowest_revenue_growth_product = data["growth_analysis"]["growth_summary"]["lowest_revenue_growth_product"]
+    lowest_revenue_growth_rate = data["growth_analysis"]["growth_summary"]["lowest_revenue_growth_rate"]
+
+
+    return {
+        "latest_MoM_revenue_growth" : latest_MoM_growth,
+        "revenue_change" : revenue_change,
+        "quantity_growth" : quantity_growth,
+        "avg_monthly_revenue_growth" : avg_monthly_revenue_growth,
+        "product_revenue_growth_table" : buffer,
+        "highest_revenue_growth_product" : highest_revenue_growth_product,
+        "highest_revenue_growth_rate" : highest_revenue_growth_rate,
+        "lowest_revenue_growth_product" : lowest_revenue_growth_product,
+        "lowest_revenue_growth_rate" : lowest_revenue_growth_rate
+    }

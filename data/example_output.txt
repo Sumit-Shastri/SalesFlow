@@ -116,8 +116,14 @@
 
   "growth_analysis": {
     "monthly_revenue_growth": {
-      "2026-09": { "revenue": 68000, "growth_percentage": null },
-      "2026-10": { "revenue": 84340, "growth_percentage": 24.0 }
+      "2026-09": { 
+        "revenue": 68000,
+        "growth_percentage": null 
+      },
+      "2026-10": {
+        "revenue": 84340,
+        "growth_percentage": 24.0 
+      }
     },
     "monthly_quantity_growth": {
       "2026-09": { "quantity": 2200, "growth_percentage": null },
