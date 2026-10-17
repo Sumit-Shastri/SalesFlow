@@ -498,7 +498,7 @@ def monthly_performance_analysis(data):
     lowest_day = min( daily_revenue_summary, key=lambda month: daily_revenue_summary[month]["total_revenue"] ) 
     lowest_revenue_day = { 
         "day": lowest_day,
-        "day_in_words": datetime.strptime(highest_day, "%Y-%m-%d").strftime("%A"),
+        "day_in_words": datetime.strptime(lowest_day, "%Y-%m-%d").strftime("%A"),
         "total_revenue": daily_revenue_summary[lowest_day]["total_revenue"] 
         }
 
@@ -568,7 +568,7 @@ def growth_analysis(data):
 
     #REVENUE CHANGE
     revenue_change_data = data["growth_analysis"]["monthly_revenue_growth"]
-    r_next_m, r_prev_m = [
+    r_prev_m, r_next_m = [
     month["revenue"]
     for month in list(revenue_change_data.values())[-2:]
     ]
@@ -578,13 +578,15 @@ def growth_analysis(data):
     # QUANTITY GROWTH
 
     quantity_change_data = data["growth_analysis"]["monthly_quantity_growth"]
-    q_next_m, q_prev_m = [
+    q_prev_m, q_next_m = [
     month["quantity"]
     for month in list(quantity_change_data.values())[-2:]
     ]
 
     quantity_change = q_next_m - q_prev_m
-    quantity_growth_percentage = next(reversed(quantity_change.values()))["growth_percentage"]
+    quantity_growth_percentage = list(
+                    quantity_change_data.values()
+                )[-1]["growth_percentage"]
 
     quantity_growth = {
         "unit_change" : quantity_change,
@@ -631,7 +633,7 @@ def growth_analysis(data):
 
     # Build DataFrame
     df = pd.DataFrame(rows, columns=[
-        "Product", "Sep revenue", "Oct revenue",
+        "Product", prev, curr,
         "Revenue change", "Revenue growth", "Unit growth"
     ])
 
@@ -675,4 +677,16 @@ def growth_analysis(data):
         "highest_revenue_growth_rate" : highest_revenue_growth_rate,
         "lowest_revenue_growth_product" : lowest_revenue_growth_product,
         "lowest_revenue_growth_rate" : lowest_revenue_growth_rate
+    }
+
+
+def run_full_report_parser(data, company_name, report_title, file_path, date_quality_notes):
+
+    return {
+        "report_cover" : report_cover(data, company_name, report_title, file_path, date_quality_notes),
+        "executive_summary" : executive_summary(data),
+        "overall_sales_performance" : overall_sales_performance(data),
+        "product_performance_analysis" : product_performance_analysis(data),
+        "monthly_performance_analysis" : monthly_performance_analysis(data),
+        "growth_analysis" : growth_analysis(data)
     }
