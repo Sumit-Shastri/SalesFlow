@@ -319,6 +319,18 @@ Section 4 : Product Performance analysis
         - Ai Components
 """
 
+#############################################################
+#   Method Name : product_performance_analysis()
+#   Description : This Method parse's all details needed for 
+#                 section 4 -> "product_performance_analysis"
+#                 and returns it in dictionary format.
+#                 dictionary contaning charts.
+#   Parameters  : data -> dictionary
+#   Returns     : pandas.DataFrame
+#   Author      : Sumit Shastri
+#   Date        : 17-10-2026
+#############################################################
+
 def product_performance_analysis(data):
     # --- Chart 1: Revenue by Product ---
     products_data = data["product_analysis"]
@@ -369,4 +381,132 @@ def product_performance_analysis(data):
     return {
         "revenue_chart": buffer1,
         "performance_chart": buffer2
+    }
+
+"""
+Section 5 : Time and Trend Analysis
+
+        ~ How did sales change over time?
+
+        - Monthly revenue.
+        - Monthly units sold.
+        - Month-over-month revenue.
+        - Month-over-month quantity changes.
+        - Highest-revenue month.
+        - Lowest-revenue month.
+
+        Visuals : 
+            line chart showing monthly revenue
+            chart for units sold
+        
+        - Ai component
+"""
+
+#############################################################
+#   Method Name : monthly_performance_analysis()
+#   Description : This Method parse's all details needed for 
+#                 section 5 -> "monthly_performance_analysis"
+#                 and returns it in dictionary format.
+#                 dictionary contaning charts.
+#   Parameters  : data -> dictionary
+#   Returns     : pandas.DataFrame
+#   Author      : Sumit Shastri
+#   Date        : 17-10-2026
+#############################################################
+
+def monthly_performance_analysis(data):
+    monthly_data = data["time_analysis"]["monthly_analysis"]
+
+    # Extract months and values
+    months = list(monthly_data.keys())
+    revenues = [monthly_data[m]["total_revenue"] for m in months]
+    quantities = [monthly_data[m]["total_quantity"] for m in months]
+
+    # --- Chart 1: Monthly Revenue (Line Chart) ---
+    fig1, ax1 = plt.subplots(figsize=(8, 5))
+    ax1.plot(months, revenues, marker="o", color="steelblue", linewidth=2)
+
+    for x, y in zip(months, revenues):
+        ax1.text(x, y + 1000, f"₹{y:,}", ha="center", fontsize=10)
+
+    ax1.set_title("Monthly Revenue", fontsize=14, fontweight="bold")
+    ax1.set_ylabel("Revenue (₹)")
+    plt.tight_layout()
+
+    buffer1 = BytesIO()
+    plt.savefig(buffer1, format="png", dpi=300)
+    plt.close(fig1)
+    buffer1.seek(0)
+
+    # --- Chart 2: Monthly Units Sold (Bar Chart) ---
+    fig2, ax2 = plt.subplots(figsize=(8, 5))
+    bars = ax2.bar(months, quantities, color="darkorange")
+
+    for bar, qty in zip(bars, quantities):
+        ax2.text(bar.get_x() + bar.get_width()/2, qty + 50,
+                 f"{qty:,}", ha="center", va="bottom", fontsize=10)
+
+    ax2.set_title("Monthly Units Sold", fontsize=14, fontweight="bold")
+    ax2.set_ylabel("Units Sold")
+    plt.tight_layout()
+
+    buffer2 = BytesIO()
+    plt.savefig(buffer2, format="png", dpi=300)
+    plt.close(fig2)
+    buffer2.seek(0)
+
+    comparison_data = data["time_analysis"]["time_comparison"]
+
+    # Convert to DataFrame for easier plotting
+    df = pd.DataFrame.from_dict(comparison_data, orient="index")
+    df.index.name = "Month Range"
+    df.reset_index(inplace=True)
+
+    # --- Create Table Plot ---
+    fig3, ax3 = plt.subplots(figsize=(8, 3))
+    ax3.axis("off")  # Hide axes
+
+    # Build table
+    table = ax3.table(
+        cellText=df.values,
+        colLabels=df.columns,
+        cellLoc="center",
+        loc="center"
+    )
+
+    table.auto_set_font_size(False)
+    table.set_fontsize(10)
+    table.scale(1.2, 1.2)
+
+    ax3.set_title("Month-over-Month Movement", fontsize=14, fontweight="bold")
+
+    # Save to buffer
+    buffer3 = BytesIO()
+    plt.savefig(buffer3, format="png", dpi=300, bbox_inches="tight")
+    plt.close(fig3)
+    buffer3.seek(0)
+
+    daily_revenue_summary = data["time_analysis"]["daily_analysis"]
+
+    highest_day = max( daily_revenue_summary, key=lambda day: daily_revenue_summary[day]["total_revenue"] )
+    highest_revenue_day = {
+        "day": highest_day,
+        "day_in_words": datetime.strptime(highest_day, "%Y-%m-%d").strftime("%A"),
+        "total_revenue": daily_revenue_summary[highest_day]["total_revenue"] 
+        }
+
+    lowest_day = min( daily_revenue_summary, key=lambda month: daily_revenue_summary[month]["total_revenue"] ) 
+    lowest_revenue_day = { 
+        "day": lowest_day,
+        "day_in_words": datetime.strptime(highest_day, "%Y-%m-%d").strftime("%A"),
+        "total_revenue": daily_revenue_summary[lowest_day]["total_revenue"] 
+        }
+
+    # Return both charts
+    return {
+        "monthly_revenue_chart": buffer1,
+        "monthly_units_chart": buffer2,
+        "month-over-month-table" : buffer3,
+        "highest_revenue_day" : highest_revenue_day,
+        "lowest_revenue_day" : lowest_revenue_day
     }
