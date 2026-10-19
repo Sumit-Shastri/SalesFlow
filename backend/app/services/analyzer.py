@@ -54,6 +54,8 @@ Essentials :
     Average Unit Price
     Number of Products
     Number of Sales Records
+    First Day - need for report
+    Last Day - need for report
 '''
 
 #############################################################
@@ -85,13 +87,19 @@ def overall_kpis(df: pd.DataFrame) -> dict:
     # Average revenue per record
     average_revenue_per_record = total_revenue / number_of_sales_records
 
+    # First Day and Last Day
+    first_date = df['Date'].min().strftime('%Y-%m-%d')
+    last_date = df['Date'].max().strftime('%Y-%m-%d')
+
     return {
         "total_revenue" : total_revenue,
         "total_units_sold" : total_units_sold,
         "average_unit_price" : average_unit_price,
         "number_of_products" : number_of_products,
         "number_of_sales_records" : number_of_sales_records,
-        "average_revenue_per_record" : average_revenue_per_record
+        "average_revenue_per_record" : average_revenue_per_record,
+        "first_date" : first_date,
+        "last_date" : last_date
     }
 
 
