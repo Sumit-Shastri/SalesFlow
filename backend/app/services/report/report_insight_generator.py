@@ -2,39 +2,59 @@
 #   Imports
 #############################################################
 
+import json
 import os
 
 from dotenv import load_dotenv
-from google import genai
-
-import json
 
 
 #############################################################
 #   API Setup
 #############################################################
 
-load_dotenv()
+def _get_client():
+    """Create Gemini only when insights are requested, not when the API starts."""
+    load_dotenv()
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        raise RuntimeError(
+            "Gemini is not configured. Add GEMINI_API_KEY to backend/.env and try again."
+        )
 
-api_key = os.getenv("GEMINI_API_KEY")
+    try:
+        from google import genai
+    except ImportError as exc:
+        raise RuntimeError(
+            "Gemini support is not installed. Install the backend requirements and try again."
+        ) from exc
+    return genai.Client(api_key=api_key)
 
-if not api_key:
-    raise RuntimeError(
-        "GEMINI_API_KEY was not found in the .env file."
-    )
 
-client = genai.Client(api_key=api_key)
+def _validate_insights(insights: dict) -> dict:
+    """Reject malformed model output before it reaches the PDF generator."""
+    expected_keys = {
+        "section_explanations",
+        "key_findings",
+        "recommendations",
+        "conclusion",
+        "areas_worth_investigating",
+    }
+    if not isinstance(insights, dict) or set(insights) != expected_keys:
+        raise ValueError("Gemini returned an unexpected report structure.")
+    if not isinstance(insights["section_explanations"], dict):
+        raise ValueError("Gemini report explanations are invalid.")
+    for key in ("key_findings", "recommendations", "areas_worth_investigating"):
+        if not isinstance(insights[key], list):
+            raise ValueError(f"Gemini report field '{key}' is invalid.")
+    if not isinstance(insights["conclusion"], str):
+        raise ValueError("Gemini report conclusion is invalid.")
+    return insights
 
-'''
-response = client.interactions.create(
-    model="gemini-3.8-flash",
-    input="Explain revenue growth in two simple sentences."
-)
-
-print(response.output_text)
-'''
-
-def generate_insights(parsed_data):
+def generate_insights(parsed_data: dict) -> dict:
+    """Ask the configured Gemini model for validated, structured report insight text."""
+    if not isinstance(parsed_data, dict):
+        raise ValueError("Report parser output must be a dictionary.")
+    client = _get_client()
 
     prompt = f"""
     # ROLE
@@ -365,4 +385,7 @@ def generate_insights(parsed_data):
         input= prompt
     )
 
-    return json.loads(response.output_text)
+    try:
+        return _validate_insights(json.loads(response.output_text))
+    except json.JSONDecodeError as exc:
+        raise ValueError("Gemini returned invalid JSON.") from exc

@@ -1,5 +1,6 @@
 from pathlib import Path
 from uuid import uuid4
+import json
 import shutil
 import tempfile
 
@@ -39,6 +40,11 @@ def get_session_file(analysis_id: str) -> Path:
     Retrieve the uploaded file for an existing session.
     """
 
+    return get_session_dir(analysis_id) / _original_file_name(analysis_id)
+
+
+def get_session_dir(analysis_id: str) -> Path:
+    """Return a validated session directory without exposing arbitrary paths."""
     if not analysis_id or Path(analysis_id).name != analysis_id:
         raise ValueError("Invalid analysis ID.")
 
@@ -47,9 +53,50 @@ def get_session_file(analysis_id: str) -> Path:
     if not session_dir.is_dir():
         raise FileNotFoundError("Analysis session not found or expired.")
 
+    return session_dir
+
+
+def _original_file_name(analysis_id: str) -> str:
+    session_dir = get_session_dir(analysis_id)
     files = list(session_dir.glob("original.*"))
 
     if len(files) != 1 or not files[0].is_file():
         raise FileNotFoundError("Uploaded file not found for this session.")
 
-    return files[0]
+    return files[0].name
+
+
+def get_working_file(analysis_id: str) -> Path:
+    """Return the normalized copy created by the validation stage."""
+    path = get_session_dir(analysis_id) / "working.csv"
+    if not path.is_file():
+        raise FileNotFoundError("Validate the uploaded file before cleaning it.")
+    return path
+
+
+def get_cleaned_file(analysis_id: str) -> Path:
+    """Return the cleaned copy created by the cleaning stage."""
+    path = get_session_dir(analysis_id) / "cleaned.csv"
+    if not path.is_file():
+        raise FileNotFoundError("Clean the uploaded file before running analysis.")
+    return path
+
+
+def session_path(analysis_id: str, filename: str) -> Path:
+    """Build a safe, session-local path for generated workflow artifacts."""
+    if Path(filename).name != filename:
+        raise ValueError("Invalid generated file name.")
+    return get_session_dir(analysis_id) / filename
+
+
+def save_json(analysis_id: str, filename: str, value: dict) -> Path:
+    path = session_path(analysis_id, filename)
+    path.write_text(json.dumps(value, ensure_ascii=False, allow_nan=False), encoding="utf-8")
+    return path
+
+
+def load_json(analysis_id: str, filename: str) -> dict:
+    path = session_path(analysis_id, filename)
+    if not path.is_file():
+        raise FileNotFoundError(f"{filename} has not been generated for this session.")
+    return json.loads(path.read_text(encoding="utf-8"))

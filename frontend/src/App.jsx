@@ -7,7 +7,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState("welcome");
 
   if (currentPage === "upload") {
-    return <UploadPage />;
+    return <UploadPage onBack={() => setCurrentPage("welcome")} />;
   }
 
   return (

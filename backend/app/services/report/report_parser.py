@@ -457,26 +457,34 @@ def monthly_performance_analysis(data):
 
     comparison_data = data["time_analysis"]["time_comparison"]
 
-    # Convert to DataFrame for easier plotting
-    df = pd.DataFrame.from_dict(comparison_data, orient="index")
-    df.index.name = "Month Range"
-    df.reset_index(inplace=True)
-
     # --- Create Table Plot ---
     fig3, ax3 = plt.subplots(figsize=(8, 3))
     ax3.axis("off")  # Hide axes
 
-    # Build table
-    table = ax3.table(
-        cellText=df.values,
-        colLabels=df.columns,
-        cellLoc="center",
-        loc="center"
-    )
+    if comparison_data:
+        # Convert to DataFrame for easier plotting.
+        df = pd.DataFrame.from_dict(comparison_data, orient="index")
+        df.index.name = "Month Range"
+        df.reset_index(inplace=True)
 
-    table.auto_set_font_size(False)
-    table.set_fontsize(10)
-    table.scale(1.2, 1.2)
+        table = ax3.table(
+            cellText=df.values,
+            colLabels=df.columns,
+            cellLoc="center",
+            loc="center"
+        )
+        table.auto_set_font_size(False)
+        table.set_fontsize(10)
+        table.scale(1.2, 1.2)
+    else:
+        ax3.text(
+            0.5,
+            0.5,
+            "Month-over-month movement requires at least two months of sales data.",
+            ha="center",
+            va="center",
+            fontsize=10,
+        )
 
     ax3.set_title("Month-over-Month Movement", fontsize=14, fontweight="bold")
 
@@ -543,6 +551,39 @@ def growth_analysis(data):
     # LATEST MoM REVENUE GROWTH
 
     monthly_comparison_data = data["time_analysis"]["time_comparison"]
+
+    # A one-month dataset has no month-over-month comparison. Keep the report
+    # useful instead of making PDF generation fail on an unavailable metric.
+    if not monthly_comparison_data:
+        fig, ax = plt.subplots(figsize=(10, 2.5))
+        ax.axis("off")
+        ax.text(
+            0.5,
+            0.5,
+            "Product growth requires at least two months of sales data.",
+            ha="center",
+            va="center",
+            fontsize=11,
+        )
+        buffer = BytesIO()
+        plt.savefig(buffer, format="png", dpi=300, bbox_inches="tight")
+        plt.close(fig)
+        buffer.seek(0)
+        return {
+            "latest_MoM_revenue_growth": {
+                "latest_MoM_growth_revenue": None,
+                "prev_month": None,
+                "next_month": None,
+            },
+            "revenue_change": None,
+            "quantity_growth": {"unit_change": None, "percentage": None},
+            "avg_monthly_revenue_growth": data["growth_analysis"]["growth_summary"]["average_monthly_revenue_growth_percentage"],
+            "product_revenue_growth_table": buffer,
+            "highest_revenue_growth_product": None,
+            "highest_revenue_growth_rate": None,
+            "lowest_revenue_growth_product": None,
+            "lowest_revenue_growth_rate": None,
+        }
 
     raw_date_value = next(reversed(monthly_comparison_data))
 
@@ -631,7 +672,8 @@ def growth_analysis(data):
             f"{qty_growth_pct:+.1f}%"
         ])
 
-    # Build DataFrame
+    # Build DataFrame. The comparison exists but individual products can still
+    # lack two periods, so keep the chart valid even when rows is empty.
     df = pd.DataFrame(rows, columns=[
         "Product", prev, curr,
         "Revenue change", "Revenue growth", "Unit growth"
