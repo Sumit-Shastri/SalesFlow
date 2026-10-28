@@ -4,6 +4,8 @@
 
 import pandas as pd         # Importing the pandas library for data manipulation and analysis 
 
+from app.services.validator import required_columns
+
 
 #############################################################
 #   Methods
@@ -187,3 +189,84 @@ def sort_date(df):
     df = df.sort_values(by="Date").reset_index(drop=True)
 
     return df
+
+
+def clean_sales_data(
+    df: pd.DataFrame,
+    *,
+    remove_duplicates: bool = True,
+) -> tuple[pd.DataFrame, dict]:
+    """Apply SalesFlow's existing cleaning steps and describe their effect.
+
+    This is the workflow-level orchestration of the smaller helpers above. It
+    deliberately returns a new DataFrame so the uploaded original remains
+    available in the analysis session.
+    """
+    missing_columns = [column for column in required_columns if column not in df.columns]
+    if missing_columns:
+        raise ValueError(
+            "Automatic cleaning cannot continue because required columns are missing: "
+            + ", ".join(missing_columns)
+        )
+
+    cleaned = df.copy()
+    records_before = len(cleaned)
+    empty_before = int(cleaned.isna().all(axis=1).sum())
+    cleaned = remove_empty_rows(cleaned)
+    empty_removed = records_before - len(cleaned)
+
+    cleaned = clean_whitespace(cleaned)
+    cleaned = clean_product_text(cleaned)
+    # Empty text is a missing value after whitespace cleanup.
+    cleaned["Product"] = cleaned["Product"].replace("", pd.NA)
+
+    duplicates_removed = 0
+    if remove_duplicates:
+        before_duplicates = len(cleaned)
+        cleaned = handle_duplicates(cleaned)
+        duplicates_removed = before_duplicates - len(cleaned)
+
+    # Coercion makes malformed values explicit; the existing missing/invalid
+    # helpers then make the documented removal decisions.
+    cleaned["Date"] = pd.to_datetime(cleaned["Date"], errors="coerce", format="mixed")
+    cleaned["Quantity"] = pd.to_numeric(cleaned["Quantity"], errors="coerce")
+    cleaned["Unit_Price"] = pd.to_numeric(cleaned["Unit_Price"], errors="coerce")
+
+    before_missing = len(cleaned)
+    cleaned = handle_missing_values(cleaned)
+    missing_removed = before_missing - len(cleaned)
+
+    before_invalid = len(cleaned)
+    cleaned = handle_invalid_values(cleaned)
+    invalid_removed = before_invalid - len(cleaned)
+
+    cleaned = convert_datatype(cleaned)
+    cleaned = standardize_column_order(cleaned, required_columns)
+    cleaned = sort_date(cleaned)
+
+    if cleaned.empty:
+        raise ValueError(
+            "Automatic cleaning removed every record. Correct the source data and upload it again."
+        )
+
+    return cleaned, {
+        "records_before": records_before,
+        "records_after": len(cleaned),
+        "records_removed": records_before - len(cleaned),
+        "empty_rows_removed": empty_removed,
+        "duplicate_rows_removed": duplicates_removed,
+        "missing_or_malformed_rows_removed": missing_removed,
+        "non_positive_rows_removed": invalid_removed,
+        "operations": [
+            "Removed completely empty rows",
+            "Trimmed whitespace and standardized product text",
+            *( ["Removed duplicate rows"] if remove_duplicates else [] ),
+            "Removed records with missing or malformed required values",
+            "Removed records with zero or negative quantity or unit price",
+            "Converted data types, standardized the required column order, and sorted dates",
+        ],
+        "note": (
+            "Automatic cleaning used SalesFlow's existing rules. "
+            "The original uploaded file was not changed."
+        ),
+    }
