@@ -2,13 +2,17 @@
 
 ### Sales Data Analysis & AI-Assisted Reporting
 
-SalesFlow is a local sales analytics application that transforms CSV and Excel data into actionable sales metrics, interactive visualizations, and structured PDF reports. It combines data validation and cleaning with automated analysis and optional AI-generated business insights.
+**🌐 Live Demo:** [SalesFlow](https://sales-flow-ten-chi.vercel.app/)  
+**💻 Source Code:** [GitHub Repository](https://github.com/Sumit-Shastri/SalesFlow)
+
+SalesFlow is a deployed sales analytics application that transforms CSV and Excel data into actionable sales metrics, interactive visualizations, and structured PDF reports. It combines data validation and cleaning with automated analysis and optional AI-generated business insights.
 
 Built with **React, Vite, FastAPI, Pandas, and ReportLab**, SalesFlow is designed to make sales-data preparation and reporting more organized, repeatable, and easier to understand.
 
-> **Project status:** Version 1 — local application
+> **Project status:** Version 1 — deployed web application
 > **Author:** Sumit Shastri
-> **Deployment:** Not yet deployed
+> **Live application:** https://sales-flow-ten-chi.vercel.app/
+> **Deployment:** Frontend on Vercel; backend on Render
 
 ---
 
@@ -129,9 +133,26 @@ flowchart TD
 
 The Gemini insight generator is optional. The report workflow can produce a PDF without AI-generated interpretation.
 
-During development, the frontend uses relative `/api` requests, which Vite proxies to the backend at `http://localhost:8000`. The backend also has a CORS policy configured for the development frontend origins.
+For local development, the frontend uses relative `/api` requests, which Vite proxies to the backend at `http://localhost:8000`. The backend also has a CORS policy configured for the development frontend origins.
 
 ---
+
+### 🌐 Live Deployment
+
+SalesFlow is deployed as a web application. The frontend and backend are hosted separately:
+
+| Component | Hosting | Details |
+| --- | --- | --- |
+| Frontend | Vercel | React + Vite web application |
+| Backend | Render | FastAPI API |
+| AI insights | Google Gemini API | Requires backend API-key configuration |
+
+**Live application:** https://sales-flow-ten-chi.vercel.app/  
+**GitHub repository:** https://github.com/Sumit-Shastri/SalesFlow
+
+The frontend communicates with the deployed FastAPI backend through its production API configuration. For local development, Vite proxies `/api` requests to the local backend at `http://localhost:8000`.
+
+> Note: The Render service URL and exact production environment-variable names should be added here from the deployment configuration. Do not publish secret values such as API keys.
 
 ## 📁 Project Structure
 
@@ -502,8 +523,8 @@ For persistent errors, inspect the backend terminal and browser developer consol
 
 ## ⚠️ Current Limitations
 
-* **Local execution:** The application is intended to run locally and has not been deployed.
-* **Temporary sessions:** Uploaded and processed files are managed using local session storage rather than a persistent database.
+* **Deployment:** The frontend is deployed on Vercel and the FastAPI backend is deployed on Render. Availability may depend on the hosting plans and service status.
+* **Temporary sessions:** Uploaded and processed files are managed using session storage rather than a persistent database; data may not persist across service restarts or separate sessions.
 * **Dashboard filtering:** The current dashboard does not provide a date-range filter; it displays the analysis period associated with the current cleaned upload.
 * **Gemini dependency:** AI-generated insights require a valid API key and network access. Live generation was not verified in the reported environment.
 * **Test fixtures:** Some existing files with an `.xlsx` extension were reported to contain plain text rather than valid Excel workbook data. Genuine Excel workbooks were tested separately.
